@@ -1,6 +1,6 @@
 package com.gereciamento.db;
 
-import javax.swing.JOptionPane;
+import java.util.List;
 
 import com.gereciamento.models.Passageiro;
 
@@ -16,37 +16,41 @@ public class PassageiroDB {
       repository.entityManager.getTransaction().begin();
       repository.entityManager.persist(passageiro);
       repository.entityManager.getTransaction().commit();
-      JOptionPane.showMessageDialog(null, "Passageiro Cadastrado com sucesso");
     } catch (Exception e) {
       e.printStackTrace();
     }
   }
 
-  // public void remover(Long idAluno) {
-  //   AlunoModelo aluno = conexao.entityManager.find(AlunoModelo.class, idAluno);
+  public void remove(Long id) {
+    Passageiro passageiro = repository.entityManager.find(Passageiro.class, id);
+    try {
+      repository.entityManager.getTransaction().begin();
+      repository.entityManager.remove(passageiro);
+      repository.entityManager.getTransaction().commit();
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+  }
 
-  //   try {
-  //     conexao.entityManager.getTransaction().begin();
-  //     conexao.entityManager.remove(aluno);
-  //     conexao.entityManager.getTransaction().commit();
-  //   } catch (Exception e) {
-  //     e.printStackTrace();
-  //   }
-  // }
+  public List<Passageiro> read() {
+    return repository.entityManager.createQuery("SELECT p FROM Passageiro p", Passageiro.class).getResultList();
+  }
 
-  // public String editar(AlunoModelo aluno, Long idAluno) {
-  //   try {
-  //     conexao.entityManager.getTransaction().begin();
-  //     aluno.setIdPessoa(idAluno);
-  //     conexao.entityManager.merge(aluno);
-  //     conexao.entityManager.getTransaction().commit();
-  //     return "Editado com Sucesso.";
-  //   } catch (Exception e) {
-  //     return e.getMessage();
-  //   }
-  // }
+  public void update(Passageiro passageiro, Long id) {
+    try {
+      repository.entityManager.getTransaction().begin();
+      passageiro.setId(id);
+      repository.entityManager.merge(passageiro);
+      repository.entityManager.getTransaction().commit();
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+  }
 
-  // public List<AlunoModelo> read() {
-  //   return conexao.entityManager.createQuery("SELECT a FROM AlunoModelo a", AlunoModelo.class).getResultList();
-  // }
+  public Passageiro findOneById(Long id) {
+    List<Passageiro> list = repository.entityManager
+        .createQuery("SELECT p FROM Passageiro p WHERE id = " + id, Passageiro.class).getResultList();
+
+    return list.getFirst();
+  }
 }
