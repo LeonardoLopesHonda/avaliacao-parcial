@@ -162,7 +162,7 @@ public class Passageiro extends Pessoa {
     Long id = Long
         .parseLong(JOptionPane.showInputDialog(this.list(listaPassageiros) + "\nDigite o ID a ser deletado: "));
 
-    passageiroDB.remove(id);
+    passageiroDB.delete(id);
     removeFromList(listaPassageiros, id);
 
     JOptionPane.showMessageDialog(null, "Passageiro Removido com sucesso.\n" + this.list(listaPassageiros));

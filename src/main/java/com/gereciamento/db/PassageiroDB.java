@@ -21,17 +21,6 @@ public class PassageiroDB {
     }
   }
 
-  public void remove(Long id) {
-    Passageiro passageiro = repository.entityManager.find(Passageiro.class, id);
-    try {
-      repository.entityManager.getTransaction().begin();
-      repository.entityManager.remove(passageiro);
-      repository.entityManager.getTransaction().commit();
-    } catch (Exception e) {
-      e.printStackTrace();
-    }
-  }
-
   public List<Passageiro> read() {
     return repository.entityManager.createQuery("SELECT p FROM Passageiro p", Passageiro.class).getResultList();
   }
@@ -41,6 +30,17 @@ public class PassageiroDB {
       repository.entityManager.getTransaction().begin();
       passageiro.setId(id);
       repository.entityManager.merge(passageiro);
+      repository.entityManager.getTransaction().commit();
+    } catch (Exception e) {
+      e.printStackTrace();
+    }
+  }
+
+  public void delete(Long id) {
+    Passageiro passageiro = repository.entityManager.find(Passageiro.class, id);
+    try {
+      repository.entityManager.getTransaction().begin();
+      repository.entityManager.remove(passageiro);
       repository.entityManager.getTransaction().commit();
     } catch (Exception e) {
       e.printStackTrace();
