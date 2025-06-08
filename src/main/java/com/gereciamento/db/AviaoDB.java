@@ -22,7 +22,7 @@ public class AviaoDB {
   }
 
   public List<Aviao> read() {
-    return repository.entityManager.createQuery("SELECT a FROM aviao a", Aviao.class).getResultList();
+    return repository.entityManager.createQuery("SELECT a FROM Aviao a", Aviao.class).getResultList();
   }
 
   public void update(Aviao aviao, Long id) {
