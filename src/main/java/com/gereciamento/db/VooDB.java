@@ -2,34 +2,34 @@ package com.gereciamento.db;
 
 import java.util.List;
 
-import com.gereciamento.models.Aviao;
+import com.gereciamento.models.Voo;
 
-public class AviaoDB {
+public class VooDB {
   protected Repository repository;
 
-  public AviaoDB() {
+  public VooDB() {
     this.repository = Repository.getInstance();
   }
 
-  public void create(Aviao aviao) {
+  public void create(Voo voo) {
     try {
       repository.entityManager.getTransaction().begin();
-      repository.entityManager.persist(aviao);
+      repository.entityManager.persist(voo);
       repository.entityManager.getTransaction().commit();
     } catch (Exception e) {
       e.printStackTrace();
     }
   }
 
-  public List<Aviao> read() {
-    return repository.entityManager.createQuery("SELECT a FROM Aviao a", Aviao.class).getResultList();
+  public List<Voo> read() {
+    return repository.entityManager.createQuery("SELECT v FROM Voo v", Voo.class).getResultList();
   }
 
-  public void update(Aviao aviao, Long id) {
+  public void update(Voo voo, Long id) {
     try {
       repository.entityManager.getTransaction().begin();
-      aviao.setIdAviao(id);
-      repository.entityManager.merge(aviao);
+      voo.setIdVoo(id);
+      repository.entityManager.merge(voo);
       repository.entityManager.getTransaction().commit();
     } catch (Exception e) {
       e.printStackTrace();
@@ -37,18 +37,18 @@ public class AviaoDB {
   }
 
   public void delete(Long id) {
-    Aviao aviao = repository.entityManager.find(Aviao.class, id);
+    Voo voo = repository.entityManager.find(Voo.class, id);
     try {
       repository.entityManager.getTransaction().begin();
-      repository.entityManager.remove(aviao);
+      repository.entityManager.remove(voo);
       repository.entityManager.getTransaction().commit();
     } catch (Exception e) {
       e.printStackTrace();
     }
   }
 
-  public Aviao findOneById(Long id) {
-    List<Aviao> list = repository.entityManager.createQuery("SELECT a FROM Aviao a WHERE idAviao = " + id, Aviao.class)
+  public Voo findOneById(Long id) {
+    List<Voo> list = repository.entityManager.createQuery("SELECT v FROM Voo v WHERE idVoo = " + id, Voo.class)
         .getResultList();
 
     return list.getFirst();

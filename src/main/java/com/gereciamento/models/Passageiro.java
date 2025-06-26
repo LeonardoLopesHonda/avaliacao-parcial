@@ -3,16 +3,25 @@ package com.gereciamento.models;
 import java.time.LocalDate;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 import javax.swing.JOptionPane;
 
 import com.gereciamento.db.PassageiroDB;
 
 @Entity
+@Table(name = "passageiros")
 public class Passageiro extends Pessoa {
   @Column(nullable = false)
   private String numeroPassaporte;
+
+  @ManyToOne
+  @JoinColumn(name = "idVoo", nullable = true)
+  private Voo voo;
 
   public Passageiro() {
   }
@@ -30,7 +39,15 @@ public class Passageiro extends Pessoa {
     this.numeroPassaporte = numeroPassaporte;
   }
 
-  public static void removeFromList(List<Passageiro> listaPassageiros, Long indexOfPassageiro) {
+  public Voo getVoo() {
+    return voo;
+  }
+
+  public void setVoo(Voo voo) {
+    this.voo = voo;
+  }
+
+  private static void removeFromList(List<Passageiro> listaPassageiros, Long indexOfPassageiro) {
     for (int i = 0; i < listaPassageiros.size(); i++) {
       if (listaPassageiros.get(i).getId() == Integer.parseInt(Long.toString(indexOfPassageiro))) {
         listaPassageiros.remove(i);
@@ -39,7 +56,7 @@ public class Passageiro extends Pessoa {
     }
   }
 
-  public static void updateFromList(List<Passageiro> listaPassageiros, Passageiro passageiro, Long indexOfPassageiro) {
+  private static void updateFromList(List<Passageiro> listaPassageiros, Passageiro passageiro, Long indexOfPassageiro) {
     for (int i = 0; i < listaPassageiros.size(); i++) {
       if (listaPassageiros.get(i).getId() == Integer.parseInt(Long.toString(indexOfPassageiro))) {
         listaPassageiros.set(i, passageiro);
@@ -48,7 +65,7 @@ public class Passageiro extends Pessoa {
     }
   }
 
-  public static LocalDate convertStringToDate(String dateString) {
+  private static LocalDate convertStringToDate(String dateString) {
     String[] dateArray = dateString.split("/");
 
     String dd = dateArray[0];
@@ -61,7 +78,7 @@ public class Passageiro extends Pessoa {
     return LocalDate.of(year, month, day);
   }
 
-  public static String validateDate(String dateString) {
+  private static String validateDate(String dateString) {
     if (dateString.equals("0"))
       return "0";
     String[] dateArray = dateString.split("/");
@@ -81,7 +98,7 @@ public class Passageiro extends Pessoa {
     return "";
   }
 
-  public static Long validateCpf(String cpfString) {
+  private static Long validateCpf(String cpfString) {
     cpfString = cpfString.replaceAll("[.-]", "");
     Long cpf = Long.parseLong(cpfString);
     if (cpf == 0L) {
@@ -135,7 +152,6 @@ public class Passageiro extends Pessoa {
     do {
       dateString = JOptionPane.showInputDialog("Digite sua Data de Nascimento (dd/mm/aaaa): ");
       dateString = validateDate(dateString);
-      System.out.println(dateString);
     } while (dateString == "");
 
     String numeroPassaporte = "";
@@ -175,48 +191,58 @@ public class Passageiro extends Pessoa {
 
     Passageiro passageiro = passageiroDB.findOneById(id);
 
-    String nome = JOptionPane
-        .showInputDialog("Digite seu Nome (0 para manter): \nAtual: " + passageiro.getNome() + "\n");
-    if (nome.equals("0")) {
-      nome = passageiro.getNome();
-    }
+    String nome = "";
+    do {
+      nome = JOptionPane.showInputDialog("Digite seu Nome (0 para manter): \nAtual: " + passageiro.getNome() + "\n");
+      if (nome.equals("")) {
+        JOptionPane.showMessageDialog(null, "Preencha com um nome valido");
+      }
+      if (!nome.equals("0")) {
+        passageiro.setNome(nome);
+      }
+    } while (nome.equals(""));
 
     Long cpf = 0L;
     do {
       String input = JOptionPane
           .showInputDialog("Digite seu CPF (0 para manter): \nAtual: " + passageiro.getCpf() + "\n");
       cpf = validateCpf(input);
+
+      if (cpf != 0 && cpf != 1) {
+        passageiro.setCpf(cpf);
+      }
     } while (cpf == 1L);
 
-    if (cpf == 0L) {
-      cpf = passageiro.getCpf();
-    }
-
     String dateString = "";
-
     do {
       dateString = JOptionPane.showInputDialog("Digite sua Data de Nascimento (dd/mm/aaaa) (0 para manter): \nAtual: "
           + passageiro.getDataNascimento() + "\n");
       dateString = validateDate(dateString);
     } while (dateString == "");
 
-    String numeroPassaporte = JOptionPane.showInputDialog(
-        "Digite seu Numero de Passaporte (0 para manter): \nAtual: " + passageiro.getNumeroPassaporte() + "\n");
-    if (numeroPassaporte.equals("0")) {
-      numeroPassaporte = passageiro.getNumeroPassaporte();
-    }
+    String numeroPassaporte = "";
+    do {
+      numeroPassaporte = JOptionPane.showInputDialog(
+          "Digite seu Numero de Passaporte(0 para manter): \nAtual: " + passageiro.getNumeroPassaporte() + "\n");
+      if (numeroPassaporte.equals("")) {
+        JOptionPane.showMessageDialog(null, "Preencha com um nome valido");
+      }
+      if (!numeroPassaporte.equals("0")) {
+        passageiro.setNumeroPassaporte(numeroPassaporte);
+      }
+    } while (nome.equals(""));
 
     if (dateString.equals("0")) {
-      passageiro = new Passageiro(nome, cpf, passageiro.getDataNascimento(), numeroPassaporte);
       passageiroDB.update(passageiro, id);
       JOptionPane.showMessageDialog(null, "Passageiro Atualizado com sucesso.\n" + this.list(listaPassageiros));
       return;
     }
 
     LocalDate date = convertStringToDate(dateString);
+    passageiro.setDataNascimento(date);
 
-    passageiro = new Passageiro(nome, cpf, date, numeroPassaporte);
     passageiroDB.update(passageiro, id);
+    updateFromList(listaPassageiros, passageiro, id);
 
     JOptionPane.showMessageDialog(null, "Passageiro Atualizado com sucesso.\n" + this.list(listaPassageiros));
   }

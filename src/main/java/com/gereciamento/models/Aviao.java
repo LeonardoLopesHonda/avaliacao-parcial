@@ -17,7 +17,7 @@ import com.gereciamento.db.AviaoDB;
 public class Aviao {
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)
-  private Long id;
+  private Long idAviao;
   @Column(nullable = false)
   private String modelo;
   @Column(nullable = false)
@@ -40,12 +40,12 @@ public class Aviao {
     this.registro = registro;
   }
 
-  public Long getId() {
-    return id;
+  public Long getIdAviao() {
+    return idAviao;
   }
 
-  public void setId(Long id) {
-    this.id = id;
+  public void setIdAviao(Long idAviao) {
+    this.idAviao = idAviao;
   }
 
   public String getModelo() {
@@ -90,7 +90,7 @@ public class Aviao {
 
   private static void removeFromList(List<Aviao> listaAvioes, Long indexOfAviao) {
     for (int i = 0; i < listaAvioes.size(); i++) {
-      if (listaAvioes.get(i).getId() == Integer.parseInt(Long.toString(indexOfAviao))) {
+      if (listaAvioes.get(i).getIdAviao() == Integer.parseInt(Long.toString(indexOfAviao))) {
         listaAvioes.remove(i);
         break;
       }
@@ -99,7 +99,7 @@ public class Aviao {
 
   private static void updateFromList(List<Aviao> listaAvioes, Aviao aviao, Long indexOfAviao) {
     for (int i = 0; i < listaAvioes.size(); i++) {
-      if (listaAvioes.get(i).getId() == Integer.parseInt(Long.toString(indexOfAviao))) {
+      if (listaAvioes.get(i).getIdAviao() == Integer.parseInt(Long.toString(indexOfAviao))) {
         listaAvioes.set(i, aviao);
         break;
       }
@@ -107,9 +107,9 @@ public class Aviao {
   }
 
   public String show() {
-    String message = "Id: " + this.getId() + " | Modelo: " + this.getModelo() + " | Fabricante: " + this.getFabricante()
-        + " | Capacidade de passageiros: " + this.getCapacidadePassageiros() + " | Ano de Fabricacao: "
-        + this.getAnoFabricacao() + " | Registro: " + this.getRegistro();
+    String message = "Id: " + this.getIdAviao() + " | Modelo: " + this.getModelo() + " | Fabricante: "
+        + this.getFabricante() + " | Capacidade de passageiros: " + this.getCapacidadePassageiros()
+        + " | Ano de Fabricacao: " + this.getAnoFabricacao() + " | Registro: " + this.getRegistro();
     return message;
   }
 
